@@ -175,12 +175,14 @@
 
     _.each(collection, function(a) {
       
-      if (accumulator === undefined) {
-        accumulator = a;
-      }
-      else {
-        accumulator = iterator(accumulator, a);
-      }
+      // if (accumulator === undefined) {
+      //   accumulator = a;
+      // }
+      // else {
+      //   accumulator = iterator(accumulator, a);
+      // }
+      accumulator === undefined ? accumulator = a : accumulator = iterator(accumulator, a);
+
     });
 
     return accumulator;
@@ -228,12 +230,7 @@
       return (Boolean(iterator(a)) === false);
     });
 
-    if (x) {
-      return false;
-    }
-    else {
-      return true;
-    }
+    return x ? false : true;
 
   };
 
@@ -328,10 +325,11 @@
 
     var cache = {};
 
-    var slice = Array.prototype.slice;
+    // var slice = Array.prototype.slice;
 
     return function () {
-      var args = slice.call(arguments);
+
+      var args = Array.prototype.slice.call(arguments);
 
       var key = args.join(',');
 
@@ -347,6 +345,13 @@
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
+
+    var args = Array.prototype.slice.call(arguments);
+    args = args.slice(2);
+
+    return setTimeout(function(a) {
+      return func.apply(this, args);}, wait);
+
   };
 
 
@@ -361,6 +366,17 @@
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+
+    var x = array.slice();
+
+    for (var i =0; i < x.length; i++){
+        var newIndex = Math.floor(Math.random()* x.length);
+        var temp = x[newIndex];
+        x[newIndex] = x[i];
+        x[i] = temp;
+    }
+
+    return x;
   };
 
 
