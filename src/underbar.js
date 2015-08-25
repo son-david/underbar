@@ -203,12 +203,38 @@
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
     // TIP: Try re-using reduce() here.
+    return _.reduce(collection, function (a,b) {
+      if (a) {
+        if (iterator === undefined) {
+          return b;
+        }
+        return Boolean(iterator(b));
+      }
+      return false;
+    }, true)
+
+    return a;
+
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
   _.some = function(collection, iterator) {
     // TIP: There's a very clever way to re-use every() here.
+    var x = _.every(collection, function(a) {
+        if (iterator === undefined) {
+          return (a === false);
+        }
+      return (Boolean(iterator(a)) === false);
+    });
+
+    if (x) {
+      return false;
+    }
+    else {
+      return true;
+    }
+
   };
 
 
@@ -231,11 +257,30 @@
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
+
+    _.each(arguments, function(a) {
+      for (var x in a) {
+        obj[x] = a[x];
+      }
+    })
+
+    return obj;
   };
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
+
+    _.each(arguments, function(a) {
+      for (var x in a) {
+        if (obj[x] === undefined) {
+          obj[x] = a[x];
+        }
+      }
+    })
+
+    return obj;
+  
   };
 
 
@@ -278,7 +323,21 @@
   // _.memoize should return a function that, when called, will check if it has
   // already computed the result for the given argument and return that value
   // instead if possible.
+
   _.memoize = function(func) {
+
+    var cache = {};
+
+    var slice = Array.prototype.slice;
+
+    return function () {
+      var args = slice.call(arguments);
+
+      var key = args.join(',');
+
+      return cache[key] ? cache[key] : (cache[key] = func.apply(this, args));
+    };  
+
   };
 
   // Delays a function for the given number of milliseconds, and then calls
