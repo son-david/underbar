@@ -381,7 +381,7 @@
         }
     }
     if (count === y) {
-      _.shuffle(x);
+      _.shuffle(x); 
     }
 
     return x;
@@ -445,18 +445,19 @@
     var args = Array.prototype.slice.call(arguments);
 
     var length = 0; //length is length of longest argument array
-    for (var y in args) {
-      if (y.length > length) {
-        length = y.length;
+    _.each(args, function(a) {
+      if (a.length > length) {
+        length = a.length;
       }
-    }
+    });
+
     for (var i = 0; i < length; i++) { //initiates empty arrays,
       x[i] = [];
     }
 
     _.each(args, function (a) { // for loop through the max length, push values of smaller arrays (or undefined)
       for (var i =0; i < length; i++) {
-        a[i] === undefined ? x[i].push("undefined") : x[i].push(a[i]);
+        a[i] === undefined ? x[i].push(undefined) : x[i].push(a[i]);
       }
     });
 
@@ -490,12 +491,14 @@
           if (_.indexOf(b,a) >  -1) {
             count++;
           }
-        });    
+        }); 
       if (count === args.length) {
         x.push(a);
         count = 0;
       }
     });
+
+    return x;
 
   };
 
@@ -503,7 +506,23 @@
   // Only the elements present in just the first array will remain.
   _.difference = function(array) {
 
+    var args = Array.prototype.slice.call(arguments);
+    args = args.slice(1);
+    var x = [];
 
+    _.each(array, function (a) {
+      var count = 0;
+      _.each(args, function (b) {
+        if (_.indexOf(b,a) > -1 ) {
+          count++;
+        }
+      });
+      if (count === 0) {
+        x.push(a);
+      }
+    });
+
+    return x;
   };
 
   // Returns a function, that, when invoked, will only be triggered at most once
@@ -512,5 +531,11 @@
   //
   // Note: This is difficult! It may take a while to implement.
   _.throttle = function(func, wait) {
+
+    return function () {
+      setTimeout(func, wait);
+    };
   };
+
+
 }());
